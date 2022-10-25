@@ -1,16 +1,12 @@
-use bevy::{
-    ecs::schedule::ReportExecutionOrderAmbiguities, prelude::*,
-    render::camera::PerspectiveProjection,
-};
-use bevy_4x_camera::{CameraRigBundle, FourXCameraPlugin};
+use bevy::{ecs::schedule::ReportExecutionOrderAmbiguities, prelude::*};
+use bevy_4x_camera::{CameraRig, CameraRigBundle, FourXCameraPlugin, KeyboardConf};
 
 fn main() {
     App::new()
         .insert_resource(ReportExecutionOrderAmbiguities)
-        .insert_resource(Msaa { samples: 4 })
         .add_plugins(DefaultPlugins)
         .add_plugin(FourXCameraPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 }
 
@@ -39,16 +35,23 @@ fn setup(
         ..Default::default()
     });
     // camera
-    commands.spawn_bundle(CameraRigBundle::default())
-    .with_children(|cb| {
-        cb.spawn_bundle(PerspectiveCameraBundle {
-            perspective_projection: PerspectiveProjection {
-                fov: 0.1,
-                ..Default::default()
+    commands
+        .spawn_bundle(CameraRigBundle {
+            camera_rig: CameraRig {
+                keyboard: KeyboardConf {
+                    move_sensitivity: (1., 1.),
+                    rotate_sensitivity: 0.5,
+                    ..default()
+                },
+                ..default()
             },
-            transform: Transform::from_translation(Vec3::new(-20.0, 20., 0.0))
-                .looking_at(Vec3::ZERO, Vec3::Y),
-            ..Default::default()
+            ..default()
+        })
+        .with_children(|cb| {
+            cb.spawn_bundle(Camera3dBundle {
+                transform: Transform::from_translation(Vec3::new(-20.0, 20., 0.0))
+                    .looking_at(Vec3::ZERO, Vec3::Y),
+                ..Default::default()
+            });
         });
-    });
 }

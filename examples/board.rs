@@ -1,8 +1,7 @@
-use bevy::{
-    ecs::schedule::ReportExecutionOrderAmbiguities, prelude::*,
-    render::camera::PerspectiveProjection,
+use bevy::{ecs::schedule::ReportExecutionOrderAmbiguities, prelude::*};
+use bevy_4x_camera::{
+    CameraRig, CameraRigBundle, CameraRigFollow, FourXCameraPlugin, KeyboardConf,
 };
-use bevy_4x_camera::{CameraRigBundle, CameraRigFollow, FourXCameraPlugin};
 use bevy_mod_picking::{
     self, InteractablePickingPlugin, PickableMesh, PickingCameraBundle, PickingPlugin,
 };
@@ -26,14 +25,21 @@ fn camera_and_lights(mut commands: Commands) {
         ..Default::default()
     });
     commands
-        .spawn_bundle(CameraRigBundle::default())
-        // camera
-        .with_children(|cb| {
-            cb.spawn_bundle(PerspectiveCameraBundle {
-                perspective_projection: PerspectiveProjection {
-                    fov: 0.1,
-                    ..Default::default()
+        // spawn the rig with the plugin config
+        .spawn_bundle(CameraRigBundle {
+            camera_rig: CameraRig {
+                keyboard: KeyboardConf {
+                    move_sensitivity: (1., 1.),
+                    rotate_sensitivity: 0.5,
+                    ..default()
                 },
+                ..default()
+            },
+            ..default()
+        })
+        // add the actual camera
+        .with_children(|cb| {
+            cb.spawn_bundle(Camera3dBundle {
                 transform: Transform::from_translation(Vec3::new(-20.0, 20., 0.0))
                     .looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
@@ -46,6 +52,7 @@ pub struct BoardPlugin;
 
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
+        // TODO: is this really necessary?
         app.insert_resource(ReportExecutionOrderAmbiguities)
             .add_startup_system(board)
             .add_system(moving_car)
@@ -106,6 +113,7 @@ fn board(
         .insert(PickableMesh::default())
         .insert(Interaction::default());
 }
+
 #[derive(Component)]
 struct MovingCar {
     direction: Vec3,
