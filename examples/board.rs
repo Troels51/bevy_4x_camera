@@ -10,13 +10,12 @@ use rand::prelude::*;
 
 fn main() {
     App::new()
-        .insert_resource(Msaa { samples: 4 })
         .add_plugins(DefaultPlugins)
         .add_plugin(BoardPlugin)
         .add_plugin(FourXCameraPlugin)
         .add_plugin(PickingPlugin)
         .add_plugin(InteractablePickingPlugin)
-        .add_startup_system(camera_and_lights.system())
+        .add_startup_system(camera_and_lights)
         .run();
 }
 
@@ -26,7 +25,8 @@ fn camera_and_lights(mut commands: Commands) {
         transform: Transform::from_translation(Vec3::new(0.0, 50.0, 0.0)),
         ..Default::default()
     });
-    commands.spawn_bundle(CameraRigBundle::default())
+    commands
+        .spawn_bundle(CameraRigBundle::default())
         // camera
         .with_children(|cb| {
             cb.spawn_bundle(PerspectiveCameraBundle {
@@ -47,9 +47,9 @@ pub struct BoardPlugin;
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ReportExecutionOrderAmbiguities)
-            .add_startup_system(board.system())
-            .add_system(moving_car.system())
-            .add_system(selectable_car.system());
+            .add_startup_system(board)
+            .add_system(moving_car)
+            .add_system(selectable_car);
     }
 }
 
@@ -92,7 +92,8 @@ fn board(
             ..Default::default()
         }
     }));
-    commands.spawn_bundle(PbrBundle {
+    commands
+        .spawn_bundle(PbrBundle {
             mesh: meshes.add(Mesh::from(shape::Cube { size: 0.5 })),
             material: materials.add(Color::rgb(1.0, 1.0, 1.0).into()),
             ..Default::default()
