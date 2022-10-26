@@ -1,6 +1,6 @@
 [package]
 name = "bevy_4x_camera"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Sarthak Singh <ss269@uw.edu>"]
 edition = "2021"
 description = "A 4X style camera for bevy"
@@ -11,9 +11,8 @@ readme = "README.md"
 repository = "https://github.com/SarthakSingh31/bevy_4x_camera"
 
 [dependencies]
-#bevy = "{ git = "https://github.com/bevyengine/bevy", branch = "main" }"
-bevy = "0.7"
+bevy = "0.8"
 
 [dev-dependencies]
-bevy_mod_picking = { git = "https://github.com/aevyrie/bevy_mod_picking", branch = "master" }
 rand = "0.8"
+bevy_mod_picking = "0.9.0"

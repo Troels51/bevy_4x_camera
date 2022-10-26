@@ -11,31 +11,26 @@ Default Key Bindings:
 # Example
 
 ```rust
-use bevy::{prelude::*, render::camera::PerspectiveProjection};
+use bevy::prelude::*;
 use bevy_4x_camera::{CameraRigBundle, FourXCameraPlugin};
 
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(FourXCameraPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 }
 
 fn setup(commands: &mut Commands) {
     commands
-        // camera
-        .spawn(CameraRigBundle::default())
+        // add the RTS-Camera-Bundle with config
+        .spawn_bundle(CameraRigBundle::default())
+        // add the actual camera as child
         .with_children(|cb| {
-            cb.spawn(Camera3dBundle {
-                // I recommend setting the fov to a low value to get a
-                // a pseudo-orthographic perspective
-                perspective_projection: PerspectiveProjection {
-                    fov: 0.1,
-                    ..Default::default()
-                },
+            cb.spawn_bundle(Camera3dBundle {
                 transform: Transform::from_translation(Vec3::new(-20.0, 20., 0.0))
-                    .looking_at(Vec3::zero(), Vec3::unit_y()),
+                    .looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             });
         });
@@ -49,3 +44,4 @@ fn setup(commands: &mut Commands) {
 | Bevy Version | `bevy_4x_camera` Version |
 | ------------ | ------------------------ |
 | `0.4.0`      | `0.1.*`                  |
+| `0.8.0`      | `0.1.3`                  |
